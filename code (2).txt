@@ -1,0 +1,172 @@
+// javascript
+
+<div data-role="header">
+          <h1>Lab 3</h1>
+     </div>
+<div data-role="page" id="storage">
+    
+    <div data-role="header">
+          <h1>Lab 3</h1>
+     </div>
+<input type="text" placeholder="storage1" id="inputString" />
+<p onclick="clearStorage()">clean memory</p>
+<p onclick="saveStatusLocally()">enter phone number</p>
+<p onclick="readStatus()">print number</p>
+<div id="write"></div>
+<div data-role="content">     
+          <p><a href="#Googledirectionservice" data-role="button">Directions</a></p> 	               
+     </div>
+</div>
+
+
+<div data-role="page" id="Googledirectionservice">
+     <div data-role="header">
+     	  <a data-rel="back" data-icon="home">contacts</a>
+          <h1>Google Maps</h1>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+<h1>Direction Service</h1><body>
+    <div id="control">
+        <input type="text" placeholder="Enter Start Point" name="start" id="start" value=""/>
+        <input type="text" placeholder="Enter End Point" name="end" id="end" value=""/>
+     
+        <select id="mode">
+      <option value="DRIVING">Driving</option>
+          </select>
+     <input type="submit" id="submit" value="submit"/>
+        
+    </div>
+    <div id="map-canvas" style="width:550px;height:550px"></div>
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+<a href="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true" class="fb-share-button" data-lang="en">share</a>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+
+// Html
+
+var stores = Array();
+var inputField = document.getElementById('inputString');
+var returnMsg;
+function clearStorage() {
+    stores = Array();
+    localStorage.clear("database")
+    document.getElementById('write').innerHTML = "storage cleared.";
+}
+function saveStatusLocally() {
+    var stringToSave = returnMsg;
+    if ((stringToSave == null) || (stringToSave == "")) {
+        document.getElementById('write').innerHTML = "nothing to store.";
+    } else {
+        
+        stores.push(stringToSave);
+        
+        inputField.value = "";
+        window.localStorage.setItem("database", stores.join(" "));
+        
+        document.getElementById('write').innerHTML = "data stored.";
+        setTimeout(function() {
+            document.getElementById('write').innerHTML = "";
+        }, 1000);
+
+    }
+}
+
+function readStatus() {
+    
+    if (window.localStorage.getItem("database") == null) {
+        document.getElementById('write').innerHTML = "nothing stored.";
+    } else {
+        document.getElementById('write').innerHTML = window.localStorage.getItem("database");
+    }
+}
+function clearStorage2() {
+    stores = Array();
+    localStorage.clear("database");
+    
+    document.getElementById('write2').innerHTML = "storage cleared.";
+}
+
+function readStatus2() {
+    if (window.localStorage.getItem("database") == null) {
+        document.getElementById('write').innerHTML = "nothing stored.";
+    } else {
+        document.getElementById('write2').innerHTML = window.localStorage.getItem("database");
+    }
+}
+
+
+//------
+
+$('#control').ready(function() {
+    initialize(36.588056, -116.943056);
+    $('#submit').click(function(){      
+                calcRoute();      
+          });
+});
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
+var map;
+function initialize(latitude,longitude) {
+  directionsDisplay = new google.maps.DirectionsRenderer();
+  var mapOptions = {
+    zoom: 7,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    center:new google.maps.LatLng(latitude,longitude)
+  }
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  directionsDisplay.setMap(map);
+     var control = document.getElementById('control');
+  control.style.display = 'block';
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
+}
+
+function calcRoute() {
+  var DRIVING = document.getElementById('mode').value;
+  var a = document.getElementById('start').value;
+var b = document.getElementById('end').value;
+    var request = {
+      origin: a,
+      destination: b,
+
+      travelMode: google.maps.TravelMode[DRIVING]
+  };
+  directionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    }
+  });
+}
+
+
+//CSS
+
+body { margin:30px; }
+h1 { font-size: 5em; }
+
+h1:hover { cursor: pointer; color: #f00; }
+
+h1:active { color:#555; }
+
+#write {  font-size: 2em; color: #ff8800 }
+input {  outline: none; }
+
+#Googledirectionservice {
+    height:550px;
+    width :550px;
+}
